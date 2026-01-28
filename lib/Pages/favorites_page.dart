@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_task/Components/down_button.dart';
-import 'package:grocery_task/Models/cart_model.dart';
+import 'package:grocery_task/Core/Models/cart_model.dart';
 import 'package:provider/provider.dart';
 
 class FavoritePages extends StatefulWidget {

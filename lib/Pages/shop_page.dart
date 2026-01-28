@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:grocery_task/Components/fruit_container.dart';
-import 'package:grocery_task/Models/cart_model.dart';
+import 'package:grocery_task/Core/Models/ProductModel.dart';
+import 'package:grocery_task/Core/Models/cart_model.dart';
+import 'package:grocery_task/Core/Rebo/Products.dart';
 import 'package:grocery_task/Pages/login_page.dart';
 import 'package:grocery_task/Pages/signup_page.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,20 @@ class ShopPage extends StatefulWidget {
 }
 
 class _ShopPageState extends State<ShopPage> {
+
+  List<ProductModel>ProductModelList = [];
+  dynamic getAllProducts()async{
+    ProductModelList = await ProductsRebo().getAllProducts();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getAllProducts();
+  }
+
+  
 
   void popUpMessage(String head,Color headColor, String body){
     showDialog(
@@ -95,24 +111,22 @@ class _ShopPageState extends State<ShopPage> {
             // *************************** Offer and See all List **************************************
             SizedBox(
               height: 300,
-              child: Consumer<CartModel>(
+              child: ProductModelList.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : Consumer<CartModel>(
                 builder: (context, value, child) {
                   return Consumer<CartModel>(
                     builder: (context, value, child){
                       return ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: 5,
+                        itemCount: ProductModelList.length > 5 ? 5 : ProductModelList.length,
                         itemBuilder: (context, index) => FruitContainer(
-                          imgPath: value.allItems[index][0],
-                          name: value.allItems[index][1],
-                          description: value.allItems[index][2],
-                          price: value.allItems[index][3],
-                          frindex: index,
-                          conWidth: 470.w,
+                          conWidth: 500.w,
+                          conHeight: 100.h,
                           onTap: () {
                             Provider.of<CartModel>(context, listen: false).addItem(index);
                             popUpMessage("Sucessfully added", Colors.green,"Check Your cart");
-                          },
+                          }, PM: ProductModelList[index], favoriteProductIndex: index,
                         ),
                       );
                     }
@@ -138,18 +152,17 @@ class _ShopPageState extends State<ShopPage> {
             // *************************** Best Selling List **************************************
             SizedBox(
               height: 300,
-              child: Consumer<CartModel>(
+              child: ProductModelList.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : Consumer<CartModel>(
                 builder: (context, value, child) {
                   return ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 3,
+                    itemCount: ProductModelList.length,
                     itemBuilder: (context, index) => FruitContainer(
-                      imgPath: value.allItems[index+2][0],
-                      name: value.allItems[index+2][1],
-                      description: value.allItems[index+2][2],
-                      price: value.allItems[index+2][3],
-                      frindex: index+2,
-                      conWidth: 470.w,
+                      PM: ProductModelList[index],
+                      favoriteProductIndex: index,
+                      conWidth: 500.w,
                       onTap: () {
                         value.addItem(index+2);
                         popUpMessage("Sucessfully added", Colors.green,"Check Your cart");

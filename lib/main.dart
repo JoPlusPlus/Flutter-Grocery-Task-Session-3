@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:grocery_task/Models/cart_model.dart';
+import 'package:grocery_task/Core/Models/cart_model.dart';
 // ignore: unused_import
 import 'package:grocery_task/Pages/Onboarding_page.dart';
 import 'package:provider/provider.dart';

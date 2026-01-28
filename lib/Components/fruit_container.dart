@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_task/Models/cart_model.dart';
+import 'package:grocery_task/Core/Models/ProductModel.dart';
+import 'package:grocery_task/Core/Models/cart_model.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class FruitContainer extends StatefulWidget {
-  String imgPath;
-  String name;
-  String description;
-  double price;
+  ProductModel PM;
   double conWidth, conHeight;
-  int frindex;
+  int favoriteProductIndex;
   bool iconTapped;
   void Function()? onTap;
   
   FruitContainer({super.key,
-    required this.imgPath,
-    required this.name,
-    required this.description,
-    required this.price,
+    required this.PM,
     this.conWidth = 0,
     this.conHeight = 0,
     required this.onTap,
-    required this.frindex,
+    required this.favoriteProductIndex,
     this.iconTapped = false,
+
   });
 
 
@@ -40,11 +36,11 @@ class _FruitContainerState extends State<FruitContainer> {
     setState(() {
       if (widget.iconTapped == true){
         iconColor = Colors.green; 
-        cart.addToFav(widget.frindex);
+        cart.addToFav(widget.favoriteProductIndex);
       } 
       else{
         iconColor = Color(0xff49454f);
-        cart.removeFromFav(widget.frindex);
+        cart.removeFromFav(widget.favoriteProductIndex);
       } 
     });
   }
@@ -55,37 +51,60 @@ class _FruitContainerState extends State<FruitContainer> {
       width: widget.conWidth == 0 ? 0 : widget.conWidth,
       height: widget.conHeight == 0 ? 0 : widget.conHeight,
       margin: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Color(0xffe2e2e2), width: 2),
-
-        
-      ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(5),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(widget.imgPath, width: 200, height: 100,),
-            const SizedBox(height: 10,),
-            Text(widget.name,
+            Image.network(
+              widget.PM.imgPath,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 130,
+            ),
+            const SizedBox(height: 10),
+            // Product Name
+            Text(
+              widget.PM.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
-            Text(widget.description, style: TextStyle(fontWeight: FontWeight.w300),),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(onPressed: updateIcon, icon: Icon(Icons.favorite_border,color: iconColor,)),
-              ],
+            // Product Description
+            Text(
+              widget.PM.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 11,
+                color: Colors.grey[900]
+              ),
             ),
+            
+            // Price and Add Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("\$${widget.price}"),
+                Text(
+                  "\$${widget.PM.price.toStringAsFixed(2)}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                // Favorite Button
+                IconButton(
+                  onPressed: updateIcon,
+                  icon: Icon(
+                    Icons.favorite_border,
+                    color: iconColor,
+                  ),
+                ),
                 GestureDetector(
                   onTap: widget.onTap,
                   child: Container(
@@ -95,10 +114,7 @@ class _FruitContainerState extends State<FruitContainer> {
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xff53b175),
                     ),
-                    
-                    child: Icon(Icons.add, color: Colors.white,
-                    
-                    ),
+                    child: Icon(Icons.add, color: Colors.white),
                   ),
                 ),
               ],
